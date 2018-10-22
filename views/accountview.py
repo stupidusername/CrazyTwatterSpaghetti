@@ -1,3 +1,4 @@
+from flask_admin import expose
 from flask_admin.contrib.sqla import ModelView
 
 
