@@ -7,8 +7,8 @@ class Account(db.Model):
     """
 
     id = db.Column('id', db.Integer, primary_key=True)
-    screen_name = db.Column('screen_name', db.String(), nullable=False)
-    email = db.Column('email', db.String(), nullable=False)
+    screen_name = db.Column('screen_name', db.String(), nullable=False, unique=True)
+    email = db.Column('email', db.String(), nullable=False, unique=True)
     password = db.Column('password', db.String(), nullable=False)
     phone_number = db.Column('phone_number', db.String(), nullable=False)
     status = db.Column('status', db.String())
