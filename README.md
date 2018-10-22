@@ -10,5 +10,8 @@
 `config-example.ini` for reference.
 - Apply DB migrations: `$ alembic upgrade head`.
 
+## Usage
+Run the flask application defined in `app.py`.
+
 ## Accounts CSV format
 `<screen_name>, <email>, <password>, <phone_number>`
