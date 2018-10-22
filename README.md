@@ -6,8 +6,7 @@
 - A RDBMS supported by SQLAlchemy. See [SQLAlchemy 1.2 Documentation > Dialects](https://docs.sqlalchemy.org/en/latest/dialects/index.html).
 
 ## Installation
-- Create a `config.ini` and configure the database DSN. Use
-`config-example.ini` for reference.
+- Create a `config.ini`. Change the database DSN and the secret key used for cookies. Use `config-example.ini` as reference.
 - Apply DB migrations: `$ alembic upgrade head`.
 
 ## Usage

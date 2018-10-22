@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 config = Config()
+app.config['SECRET_KEY'] = config.get_secret_key()
 app.config['SQLALCHEMY_DATABASE_URI'] = config.get_sql_alchemy_url()
 db = SQLAlchemy(app)
 
