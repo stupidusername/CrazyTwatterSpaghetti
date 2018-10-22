@@ -1,6 +1,6 @@
 from config import Config
 from flask import Flask
-from flask_admin import Admin
+from flask_admin import Admin, AdminIndexView
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -13,12 +13,8 @@ from models.account import Account
 
 # Import views.
 from views.accountview import AccountView
+from views.homeview import HomeView
 
 # Initialize the admin interface.
-admin = Admin(app, name='Admin Panel', template_mode='bootstrap3')
+admin = Admin(app, index_view=HomeView(url='/'))
 admin.add_view(AccountView(Account, db.session))
-
-@app.route("/")
-def index():
-    print(Account.query.all())
-    return ':D'
