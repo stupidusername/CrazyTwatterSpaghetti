@@ -7,6 +7,10 @@ config = Config()
 app.config['SQLALCHEMY_DATABASE_URI'] = config.get_sql_alchemy_url()
 db = SQLAlchemy(app)
 
+# Models can only be imported after db is declared.
+from models.account import Account
+
 @app.route("/")
 def index():
-    return "Hello World!"
+    print(Account.query.all())
+    return ':D'
