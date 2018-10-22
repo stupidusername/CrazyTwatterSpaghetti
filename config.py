@@ -13,6 +13,6 @@ class Config(object):
 
     def get_sql_alchemy_url(self) -> str:
         """
-        :return: Database DSN.
+        :returns: Database DSN.
         """
         return self._config['DEFAULT']['sqlalchemy.url']
