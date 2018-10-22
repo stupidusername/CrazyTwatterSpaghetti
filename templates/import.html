@@ -1,0 +1,27 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+  <form method="POST" enctype="multipart/form-data">
+
+    {{ form.csrf_token }}
+
+    <div class="control-group">
+      {{ form.file }}
+    </div>
+
+    {% for error in form.errors['file'] %}
+      <div class="control-group">
+        <div class="alert alert-danger">
+          {{ error }}
+        </div>
+      </div>
+    {% endfor %}
+
+    <hr>
+
+    <div class="control-group">
+      <input type="submit" value="Import" class="btn btn-primary">
+    </div>
+
+  </form>
+{% endblock %}
