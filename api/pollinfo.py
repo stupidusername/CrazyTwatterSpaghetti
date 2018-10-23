@@ -19,6 +19,7 @@ class PollInfo(Resource):
                 'question': None | str,
                 'options': [
                     {
+                        'index': int,
                         'value': str,
                         'votes': int,
                     }

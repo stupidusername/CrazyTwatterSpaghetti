@@ -1,4 +1,5 @@
 from api.pollinfo import PollInfo
+from api.pollvote import PollVote
 from config import Config
 from flask import Flask
 from flask_admin import Admin, AdminIndexView
@@ -31,6 +32,7 @@ def handle_bad_request(e):
 
 # Add API endpoints.
 api.add_resource(PollInfo, '/api/poll-info/<int:tweet_id>')
+api.add_resource(PollVote, '/api/poll-vote/<int:tweet_id>/<int:option_index>/<int:votes>')
 
 # Initialize the admin interface.
 admin = Admin(app, index_view=HomeView(url='/'))
