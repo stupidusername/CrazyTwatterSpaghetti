@@ -57,6 +57,17 @@ Run the flask application defined in `app.py`.
   }
   ```
 
+  Response example for non-accessible tweets:
+
+  ```
+  {
+    "poll": None,
+    "finished": null,
+    "question": null,
+    "options": []
+  }
+  ```
+
 - `/api/poll-vote/<tweet_id>/<option_index>/<votes>`
 
   Use the loaded accounts to try to give a certain number of votes to a given poll option.
