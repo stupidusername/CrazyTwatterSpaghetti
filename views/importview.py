@@ -12,5 +12,6 @@ class ImportView(BaseView):
     def index(self):
         form = ImportForm()
         if form.validate_on_submit():
+            result = form.save()
             return redirect(url_for('account.index_view'))
         return self.render('import.html', form=form)

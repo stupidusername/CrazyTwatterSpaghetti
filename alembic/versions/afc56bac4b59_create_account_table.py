@@ -20,10 +20,10 @@ def upgrade():
     op.create_table(
         'account',
         sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('screen_name', sa.String()),
-        sa.Column('email', sa.String()),
-        sa.Column('password', sa.String()),
-        sa.Column('phone_number', sa.String()),
+        sa.Column('screen_name', sa.String(), nullable=False, unique=True),
+        sa.Column('email', sa.String(), nullable=False, unique=True),
+        sa.Column('password', sa.String(), nullable=False),
+        sa.Column('phone_number', sa.String(), nullable=False),
         sa.Column('status', sa.String()),
         sa.Column('status_updated_at', sa.DateTime()),
     )
