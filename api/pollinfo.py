@@ -14,9 +14,9 @@ class PollInfo(Resource):
         :returns: A dictionary with the following format:
             ```
             {
-                'poll': bool,
-                'finished': None | bool,
-                'question': None | str,
+                'poll': bool | None,
+                'finished': bool | None,
+                'question': str | None,
                 'options': [
                     {
                         'index': int,
