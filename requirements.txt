@@ -4,3 +4,5 @@ Flask-Admin==1.5.2
 Flask-RESTful==0.3.6
 Flask-SQLAlchemy==2.3.2
 Flask-WTF==0.14.2
+lxml==4.2.5
+requests==2.20.0
