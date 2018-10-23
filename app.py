@@ -1,13 +1,19 @@
+from api.pollinfo import PollInfo
 from config import Config
 from flask import Flask
 from flask_admin import Admin, AdminIndexView
+from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.exceptions import InternalServerError
 
+# Create and configure app.
 app = Flask(__name__)
 config = Config()
 app.config['SECRET_KEY'] = config.get_secret_key()
 app.config['SQLALCHEMY_DATABASE_URI'] = config.get_sql_alchemy_url()
+
+# Create app components.
+api = Api(app)
 db = SQLAlchemy(app)
 
 # Models can only be imported after db is declared.
@@ -22,6 +28,9 @@ from views.homeview import HomeView
 @app.errorhandler(InternalServerError)
 def handle_bad_request(e):
     return str(e), InternalServerError.code
+
+# Add API endpoints.
+api.add_resource(PollInfo, '/api/poll-info/<int:tweet_id>')
 
 # Initialize the admin interface.
 admin = Admin(app, index_view=HomeView(url='/'))
