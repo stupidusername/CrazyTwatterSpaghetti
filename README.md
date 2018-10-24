@@ -20,73 +20,76 @@ Run the flask application defined in `app.py`.
 
   Get information about a twitter poll given its tweet id.
 
-  Response example if the tweet is a poll:
-  ```
-  {
-    "poll": true,
-    "finished": false,
-    "status": "What is your favorite type of pasta?",
-    "options": [
-      {
-        "index": 1,
-        "value": "Ravioli",
-        "votes": 7
-      },
-      {
-        "index": 2,
-        "value": "Macaroni",
-        "votes": 15
-      },
-      {
-        "index": 3,
-        "value": "Code Spaghetti",
-        "votes": 63
-      }
-    ],
-    "total_votes": 85
-  }
-  ```
-  Note: The number of votes of each option will take the value `null` if it cannot be determined.
+  - Response example if the tweet is a poll:
 
-  Response example for other types of tweets:
+    ```
+    {
+      "poll": true,
+      "finished": false,
+      "status": "What is your favorite type of pasta?",
+      "options": [
+        {
+          "index": 1,
+          "value": "Ravioli",
+          "votes": 7
+        },
+        {
+          "index": 2,
+          "value": "Macaroni",
+          "votes": 15
+        },
+        {
+          "index": 3,
+          "value": "Code Spaghetti",
+          "votes": 63
+        }
+      ],
+      "total_votes": 85
+    }
+    ```
 
-  ```
-  {
-    "poll": false,
-    "finished": null,
-    "status": null,
-    "options": [],
-    "total_votes": null
-  }
-  ```
+    Note: The number of votes of each option will take the value `null` if it cannot be determined.
 
-  Response example for non-accessible tweets:
+  - Response example for other types of tweets:
 
-  ```
-  {
-    "poll": None,
-    "finished": null,
-    "status": null,
-    "options": [],
-    "total_votes": null
-  }
-  ```
+    ```
+    {
+      "poll": false,
+      "finished": null,
+      "status": null,
+      "options": [],
+      "total_votes": null
+    }
+    ```
+
+  - Response example for non-accessible tweets:
+
+    ```
+    {
+      "poll": None,
+      "finished": null,
+      "status": null,
+      "options": [],
+      "total_votes": null
+    }
+    ```
 
 - `/api/poll-vote/<tweet_id>/<option_index>/<votes>`
 
   Use the loaded accounts to try to give a certain number of votes to a given poll option.
   The number of tries will be lower than the specified number of votes if there is no enough accounts loaded.
 
-  Response example:
-  ```
-  {
-    "tries": 10,
-    "hits": 9,
-    "errors": [
-      {
-        "screen_name": "john_doe",
-        "error": "Unable to login: non-existing user or incorrect password."
-      }
-    ]
-  }
-  ```
+  - Response example:
+
+    ```
+    {
+      "tries": 10,
+      "hits": 9,
+      "errors": [
+        {
+          "screen_name": "john_doe",
+          "error": "Unable to login: non-existing user or incorrect password."
+        }
+      ]
+    }
+    ```
