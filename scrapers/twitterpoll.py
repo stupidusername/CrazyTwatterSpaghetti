@@ -89,12 +89,10 @@ class TwitterPoll(TwitterStatus):
                 {
                     'index': int,
                     'value': str,
-                    'votes': int | None
+                    'votes': int
                 }
             ]
             ```
-            Note: The number of votes of each option will take the value `None`
-                if it cannot be determined.
         """
         return self._options
 

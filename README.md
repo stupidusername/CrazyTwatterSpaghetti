@@ -48,8 +48,6 @@ Run the flask application defined in `app.py`.
     }
     ```
 
-    Note: The number of votes of each option will take the value `null` if it cannot be determined.
-
   - Response example for other types of tweets:
 
     ```
