@@ -1,20 +1,17 @@
 from lxml import html
 from lxml.etree import tostring
 import requests
-from  requests.exceptions import RequestException
+from scrapers.twitter import Twitter
 from typing import Union
 
 
-class TwitterStatus(object):
+class TwitterStatus(Twitter):
     """
     This class represents a twitter status and it uses scraping to get its
     information.
 
-    :const str BASE_URL: Twitter base URL.
     :param int id: Tweet id.
     """
-
-    BASE_URL = 'https://twitter.com'
 
     def __init__(self, id: int):
         # Session used to keep cookies.
@@ -26,17 +23,12 @@ class TwitterStatus(object):
         # Status URL.
         self._status_url = self.BASE_URL + '/statuses/' + str(self._id)
         # Create the element tree.
-        try:
-            r = self._session.get(self._status_url)
-            self._tree = html.fromstring(r.content)
-        except RequestException:
-            # Failed request.
-            pass
-        # Populate status if the element tree was created.
-        if self._tree is not None:
-            elements = self._tree.find_class('TweetTextSize--jumbo')
-            if elements:
-                self._status = elements[0].text_content()
+        response = self.make_request(self._session, self._status_url, 'get')
+        self._tree = html.fromstring(response.content)
+        # Populate status.
+        elements = self._tree.find_class('TweetTextSize--jumbo')
+        if elements:
+            self._status = elements[0].text_content()
 
     def get_status(self) -> Union[None, str]:
         """
