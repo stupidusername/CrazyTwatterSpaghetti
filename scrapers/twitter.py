@@ -1,3 +1,4 @@
+import requests
 from requests import Response, Session
 from requests.exceptions import RequestException
 from scrapers.exceptions import TwitterScrapingException
@@ -28,7 +29,7 @@ class Twitter(object):
         :param str method: `get` or `porst`.
         :param **kwargs: Keyword arguments passed to the request method.
         """
-        method = getattr((session if session else request), method)
+        method = getattr((session if session else requests), method)
         try:
             response = method(url, **kwargs)
             return response
