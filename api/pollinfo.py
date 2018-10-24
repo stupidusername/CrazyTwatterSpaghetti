@@ -1,4 +1,5 @@
 from flask_restful import Resource
+from scrapers.twitterpoll import TwitterPoll
 
 
 class PollInfo(Resource):
@@ -28,10 +29,11 @@ class PollInfo(Resource):
             }
             ```
         """
+        poll = TwitterPoll(tweet_id)
         return {
-            'poll': False,
-            'finished': None,
-            'status': None,
-            'options': [],
-            'total_votes': None
+            'poll': poll.is_poll(),
+            'finished': poll.is_finished(),
+            'status': poll.get_status(),
+            'options': poll.get_options(),
+            'total_votes': poll.get_total_votes()
         }
