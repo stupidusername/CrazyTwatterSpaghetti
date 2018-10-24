@@ -59,7 +59,39 @@ class TwitterPoll(TwitterStatus):
                     raise TwitterScrapingException(
                         'Total votes could not be determined.'
                     )
-
+                # Get options
+                elements = poll_tree.find_class('PollXChoice-choice--text')
+                for element in elements:
+                    try:
+                        index = int(element.get('data-poll-index'))
+                    except TypeError:
+                        raise TwitterScrapingException(
+                            'Option index could not be determined.'
+                        )
+                    children = element.getchildren()
+                    if len(children) < 2:
+                        raise TwitterScrapingException(
+                            'Option value could not be determined.'
+                        )
+                    value = children[1].text_content()
+                    percentage_text = children[0].text[:-1]  # Remove "%".
+                    try:
+                        percentage = int(percentage_text)
+                    except TypeError:
+                        raise TwitterScrapingException(
+                            'Option votes could not be determined.'
+                        )
+                    votes = int(round(self._total_votes * percentage / 100))
+                    self._options.append({
+                        'index': index,
+                        'value': value,
+                        'votes': votes
+                    })
+                if not self._options:
+                    # Options could not be determined. Raise an exception.
+                    raise TwitterScrapingException(
+                        'Options could not be determined.'
+                    )
 
     def is_poll(self) -> Union[bool, None]:
         """
@@ -93,6 +125,7 @@ class TwitterPoll(TwitterStatus):
                 }
             ]
             ```
+            Note: The number of votes of each option is not completely precise.
         """
         return self._options
 

@@ -48,6 +48,8 @@ Run the flask application defined in `app.py`.
     }
     ```
 
+    Note: The number of votes of each option is not completely precise.
+
   - Response example for other types of tweets:
 
     ```
