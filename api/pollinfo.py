@@ -16,20 +16,22 @@ class PollInfo(Resource):
             {
                 'poll': bool | None,
                 'finished': bool | None,
-                'question': str | None,
+                'status': None | str,
                 'options': [
                     {
                         'index': int,
                         'value': str,
-                        'votes': int,
+                        'votes': int
                     }
-                ]
+                ],
+                'total_votes': int | None
             }
             ```
         """
         return {
             'poll': False,
             'finished': None,
-            'question': None,
-            'options': []
+            'status': None,
+            'options': [],
+            'total_votes': None
         }

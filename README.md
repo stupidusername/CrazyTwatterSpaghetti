@@ -25,7 +25,7 @@ Run the flask application defined in `app.py`.
   {
     "poll": true,
     "finished": false,
-    "question": "What is your favorite type of pasta?",
+    "status": "What is your favorite type of pasta?",
     "options": [
       {
         "index": 1,
@@ -42,9 +42,11 @@ Run the flask application defined in `app.py`.
         "value": "Code Spaghetti",
         "votes": 63
       }
-    ]
+    ],
+    "total_votes": 85
   }
   ```
+  Note: The number of votes of each option will take the value `null` if it cannot be determined.
 
   Response example for other types of tweets:
 
@@ -52,8 +54,9 @@ Run the flask application defined in `app.py`.
   {
     "poll": false,
     "finished": null,
-    "question": null,
-    "options": []
+    "status": null,
+    "options": [],
+    "total_votes": null
   }
   ```
 
@@ -63,8 +66,9 @@ Run the flask application defined in `app.py`.
   {
     "poll": None,
     "finished": null,
-    "question": null,
-    "options": []
+    "status": null,
+    "options": [],
+    "total_votes": null
   }
   ```
 
