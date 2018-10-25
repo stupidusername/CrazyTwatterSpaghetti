@@ -40,3 +40,12 @@ class Account(db.Model):
         self.status = status
         self.status_updated_at = datetime.utcnow()
         db.session.commit()
+
+    def set_cookies(self, cookies: str):
+        """
+        Set and save cookies.
+
+        :param str cookies: Cookies.
+        """
+        self.cookies = cookies
+        db.session.commit()
