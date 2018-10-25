@@ -22,6 +22,14 @@ class TwitterLogin(Twitter):
         self._session = requests.Session()
         # Default attribute values
         self._account = account
+        # Store cookies because they are cleaned later on.
+        self._cookies = self._account.cookies
+        # Set the account status to undetermined beforehand in case any error
+        # occurs.
+        self._account.update_status(Account.STATUS_UNDETERMINED)
+        # Cookies will only be saved after a successful login.
+        # Reset them for now.
+        self._account.set_cookies(None)
         # Create the element tree.
         response = self.make_request(self._session, self.LOGIN_URL, 'get')
         tree = html.fromstring(response.content)
