@@ -29,6 +29,7 @@ class Account(db.Model):
     phone_number = db.Column('phone_number', db.String(), nullable=False)
     status = db.Column('status', db.String())
     status_updated_at = db.Column('status_updated_at', db.DateTime())
+    cookies = db.Column('cookies', db.Text())
 
     def update_status(self, status: str):
         """

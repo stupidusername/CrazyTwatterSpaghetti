@@ -26,6 +26,7 @@ def upgrade():
         sa.Column('phone_number', sa.String(), nullable=False),
         sa.Column('status', sa.String()),
         sa.Column('status_updated_at', sa.DateTime()),
+        sa.Column('cookies', sa.Text()),
     )
 
 
