@@ -9,11 +9,11 @@ class Account(db.Model):
 
     Status will be blank for those account which were not tested.
 
-    :const str LOGGED_IN: Login was successful.
-    :const str WRONG_CREDENTIALS: Incorrect screen name or password.
-    :const str SUSPENDED: Suspended account.
-    :const str UNCONFIRMED_ACCESS: A manual confirmation is needed.
-    :const str UNDETERMINED: Unable to complete the login process.
+    :const str STATUS_LOGGED_IN: Login was successful.
+    :const str STATUS_WRONG_CREDENTIALS: Incorrect screen name or password.
+    :const str STATUS_SUSPENDED: Suspended account.
+    :const str STATUS_UNCONFIRMED_ACCESS: A manual confirmation is needed.
+    :const str STATUS_UNDETERMINED: Unable to complete the login process.
     """
 
     STATUS_LOGGED_IN = 'logged_in'

@@ -16,14 +16,16 @@ class TwitterLogin(Twitter):
     :const str LOGIN_URL: Login URL.
     :const str SESSIONS_URL: Sessions URL (used for login form submission).
     :const str CHALLENGE_URL: Login challenge URL.
+    :const str CONSENT_VIOLATION_URL: Consent violation URL.
     :param Account account: Account model instance.
     """
 
     LOGIN_URL = Twitter.BASE_URL + '/login'
     LOGIN_ERROR_URL = Twitter.BASE_URL + '/login/error'
     SESSIONS_URL = Twitter.BASE_URL + '/sessions'
-    CONFIRM_ACCESS = Twitter.BASE_URL + '/account/access'
+    CONFIRM_ACCESS_URL = Twitter.BASE_URL + '/account/access'
     CHALLENGE_URL = Twitter.BASE_URL + '/account/login_challenge'
+    CONSENT_VIOLATION_URL = Twitter.BASE_URL + '/i/flow/consent_flow'
 
     def __init__(self, account: Account):
         # Session used to keep cookies.
@@ -48,21 +50,22 @@ class TwitterLogin(Twitter):
         # Restore cookies if any.
         if self._cookies:
             self._session.cookies.update(pickle.loads(self._cookies))
+            # Get the login page.
+            response = self.make_request(self._session, self.LOGIN_URL, 'get')
+            # Check if there is any challenge to solve and determine status.
+            self._check_for_challenge(response)
+            self._determine_status(response)
+            # Check if the login was successful.
+            logged_in = self._account.status in [
+                Account.STATUS_LOGGED_IN, Account.STATUS_SUSPENDED
+            ]
+            if logged_in:
+                return
+        # Cookies were not set or they did not work.
         # Get the login page.
         response = self.make_request(self._session, self.LOGIN_URL, 'get')
         # Create the element tree.
         tree = html.fromstring(response.content)
-        # Check for login redirect. This occurs if the cookies are valid.
-        scripts = tree.xpath('//script')
-        if scripts:
-            redirect = 'location.replace(location.href.split("#")[0]);'
-            if redirect in scripts[0].text_content():
-                # Redirect found. Check if there is any challenge to solve and
-                # determine the status.
-                self._check_for_challenge(response)
-                self._determine_status(response)
-                return
-        # Cookies were not set or they did not work.
         # Check for the existence of the login form.
         if len(tree.forms) < 3:
             # Login form not found. Raise Exception.
@@ -149,10 +152,46 @@ class TwitterLogin(Twitter):
             self._account.update_status(Account.STATUS_WRONG_CREDENTIALS)
             return
         # Make a request to the home page to check the status.
-        home_response = self.make_request(self._session, self.BASE_URL, 'get')
+        # If this header is not sent, twitter redirects the user to an empty
+        # page that contains a javascript redirect to the actual home page.
+        headers = {
+            'Referer':
+                'https://twitter.com/login/error?redirect_after_login=%2F'
+        }
+        home_response = self.make_request(
+            self._session,
+            self.BASE_URL,
+            'get',
+            headers=headers
+        )
         # If the request was redirected to an account access check we can not
         # continue.
-        if home_response.url.startswith(self.CONFIRM_ACCESS):
+        if home_response.url.startswith(self.CONFIRM_ACCESS_URL):
             self._account.update_status(Account.STATUS_UNCONFIRMED_ACCESS)
             return
-        self._account.set_cookies(pickle.dumps(self._session.cookies))
+        # Check if the request was redirected to the consent violation flow.
+        if home_response.url.startswith(self.CONSENT_VIOLATION_URL):
+            # The account is most likely suspended.
+            self._account.update_status(Account.STATUS_SUSPENDED)
+            return
+        # Check if the page contains the profile menu.
+        tree = html.fromstring(home_response.content)
+        lis = tree.xpath("//li[@id='user-dropdown']")
+        if lis:
+            # The account is logged in.
+            # Check for a suspended account warning.
+            divs = tree.xpath("//div[@id='account-suspended']")
+            if divs:
+                # The account is suspended.
+                self._account.update_status(Account.STATUS_SUSPENDED)
+                return
+            else:
+                # No was found. The account is likely to be active.
+                self._account.update_status(Account.STATUS_LOGGED_IN)
+                # Save the cookies.
+                self._account.set_cookies(pickle.dumps(self._session.cookies))
+                return
+        # The status could not be determined.
+        raise TwitterScrapingException(
+            'Account status could not be determined.'
+        )
