@@ -1,6 +1,7 @@
 from lxml import html
 from lxml.etree import tostring
 import requests
+from requests import Session
 from scrapers.twitter import Twitter
 from typing import Optional
 
@@ -11,11 +12,14 @@ class TwitterStatus(Twitter):
     information.
 
     :param int id: Tweet id.
+    :param None|Session session: A request session can be passed to the
+        constructor. This can be useful to make the requests as a logged in
+        user.
     """
 
-    def __init__(self, id: int):
+    def __init__(self, id: int, session: Optional[Session] = None):
         # Session used to keep cookies.
-        self._session = requests.Session()
+        self._session = session if session else requests.Session()
         # Default attribute values.
         self._id = id
         self._status = None

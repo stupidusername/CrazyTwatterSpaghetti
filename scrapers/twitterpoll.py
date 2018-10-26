@@ -1,5 +1,6 @@
 from lxml import html
 import re
+from requests import Session
 from scrapers.exceptions import TwitterScrapingException
 from scrapers.twitterstatus import TwitterStatus
 from typing import List, Optional
@@ -10,11 +11,12 @@ class TwitterPoll(TwitterStatus):
     This class represents a twitter poll and it uses scraping to get its
     information.
 
-    :param int id: Tweet id.
+    :param int id: See parent doc.
+    :param None|Session session: See parent doc.
     """
 
-    def __init__(self, id):
-        super(TwitterPoll, self).__init__(id)
+    def __init__(self, id: int, session: Optional[Session] = None):
+        super(TwitterPoll, self).__init__(id, session)
         # Default attribute values.
         self._is_poll = None
         self._finished = None

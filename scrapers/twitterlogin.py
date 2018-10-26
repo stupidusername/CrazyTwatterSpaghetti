@@ -43,6 +43,12 @@ class TwitterLogin(Twitter):
         # Begin the login process.
         self._login()
 
+    def get_session(self) -> Session:
+        """
+        Get the request session.
+        """
+        return self._sesion
+
     def _login(self):
         """
         Try to login.
