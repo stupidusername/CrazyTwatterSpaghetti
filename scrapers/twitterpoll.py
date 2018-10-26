@@ -1,4 +1,5 @@
 from lxml import html
+from models.account import Account
 import re
 from scrapers.exceptions import TwitterScrapingException, TwitterVoteException
 from scrapers.twitterlogin import TwitterLogin
@@ -17,7 +18,7 @@ class TwitterPoll(TwitterStatus):
 
     def __init__(self, id: int, twitter_login: Optional[TwitterLogin] = None):
         # Get session to pass to the parent constructor.
-        session = twitter_login.get_session if twitter_login else None
+        session = twitter_login.get_session() if twitter_login else None
         super(TwitterPoll, self).__init__(id, session)
         # Default attribute values.
         self._twitter_login = twitter_login
@@ -149,5 +150,10 @@ class TwitterPoll(TwitterStatus):
 
         :param int option_index: Poll option index (starting from 1).
         """
+        # Check that an account was provided.
         if not self._twitter_login:
             raise TwitterVoteException('No account was provided.')
+        # Check that the accout is logged in.
+        account = self._twitter_login.get_account()
+        if account.status != Account.STATUS_LOGGED_IN:
+            raise TwitterVoteException('The account could not be logged in.')
