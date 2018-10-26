@@ -10,9 +10,13 @@ class Twitter(object):
     Abastract base class for twitter scrappers.
 
     :const str BASE_URL: Twitter base URL.
+    :const str AFTER_LOGIN_REFERER: This raferer can be used in a request to
+        fake a post-login redirect.
     """
 
     BASE_URL = 'https://twitter.com'
+    AFTER_LOGIN_REFERER = \
+        'https://twitter.com/login/error?redirect_after_login=%2F'
 
     @staticmethod
     def make_request(

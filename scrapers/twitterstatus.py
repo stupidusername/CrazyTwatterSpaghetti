@@ -26,8 +26,20 @@ class TwitterStatus(Twitter):
         self._tree = None
         # Status URL.
         self._status_url = self.BASE_URL + '/statuses/' + str(self._id)
+        # Make the request.
+        headers = {}
+        # Send referer header if the request is from a logged in session.
+        if session:
+            # If this header is not sent, the user is redirected to an empty
+            # page that contains a javascript redirect to the requested page.
+            headers = {'Referer': self.AFTER_LOGIN_REFERER}
+        response = self.make_request(
+            self._session,
+            self._status_url,
+            'get',
+            headers=headers
+        )
         # Create the element tree.
-        response = self.make_request(self._session, self._status_url, 'get')
         self._tree = html.fromstring(response.content)
         # Populate status.
         elements = self._tree.find_class('TweetTextSize--jumbo')

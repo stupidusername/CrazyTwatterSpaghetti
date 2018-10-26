@@ -1,7 +1,7 @@
 from lxml import html
 import re
-from requests import Session
-from scrapers.exceptions import TwitterScrapingException
+from scrapers.exceptions import TwitterScrapingException, TwitterVoteException
+from scrapers.twitterlogin import TwitterLogin
 from scrapers.twitterstatus import TwitterStatus
 from typing import List, Optional
 
@@ -11,13 +11,14 @@ class TwitterPoll(TwitterStatus):
     This class represents a twitter poll and it uses scraping to get its
     information.
 
-    :param int id: See parent doc.
-    :param None|Session session: See parent doc.
+    :param int id: Tweet id.
+    :param None|TwitterLogin twitter_login: Make the requests as a logged user.
     """
 
-    def __init__(self, id: int, session: Optional[Session] = None):
+    def __init__(self, id: int, twitter_login: Optional[TwitterLogin] = None):
         super(TwitterPoll, self).__init__(id, session)
         # Default attribute values.
+        self._twitter_login = twitter_login
         self._is_poll = None
         self._finished = None
         self._options = []
@@ -34,20 +35,20 @@ class TwitterPoll(TwitterStatus):
                 # sent in the headers of the request to avoid a 403 status.
                 self._poll_url = self.BASE_URL + elements[0].get('data-src')
                 headers = {'Referer': self._status_url}
-                r = self._session.get(self._poll_url, headers=headers)
-                poll_tree = html.fromstring(r.content)
-                # Check the state of the poll.
+                response = self._session.get(self._poll_url, headers=headers)
+                poll_tree = html.fromstring(response.content)
+                # Check the status of the poll.
                 elements = poll_tree.find_class('PollXChoice')
                 if elements:
-                    state = elements[0].get('data-poll-init-state')
-                    if state == 'final':
+                    poll_status = elements[0].get('data-poll-init-state')
+                    if poll_status == 'opened':
                         self._finished = True
-                    elif state == 'opened':
-                        self._finished = False
+                    elif poll_status == 'final':
+                        self._finished = True
                 if self._finished is None:
-                    # Raise an exception if the state could not be determined.
+                    # Raise an exception if the poll status was not determined.
                     raise TwitterScrapingException(
-                        'Poll state could not be determined.'
+                        'Poll status could not be determined.'
                     )
                 # Get the total number of votes.
                 elements = poll_tree.find_class('PollXChoice-footer--total')
@@ -139,3 +140,12 @@ class TwitterPoll(TwitterStatus):
             retrieved.
         """
         return self._total_votes
+
+    def vote(self, option_index):
+        """
+        Vote the specified option.
+
+        :param int option_index: Poll option index (starting from 1).
+        """
+        if not self._twitter_login:
+            raise TwitterVoteException('No account was provided.')

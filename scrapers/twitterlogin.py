@@ -2,7 +2,7 @@ from lxml import html
 from models.account import Account
 import pickle
 import requests
-from requests import Response
+from requests import Response, Session
 from scrapers.exceptions import TwitterScrapingException
 from scrapers.twitter import Twitter
 from urllib import parse
@@ -47,7 +47,13 @@ class TwitterLogin(Twitter):
         """
         Get the request session.
         """
-        return self._sesion
+        return self._session
+
+    def get_account(self) -> Account:
+        """
+        Get the account model.
+        """
+        return self._account
 
     def _login(self):
         """
@@ -158,17 +164,13 @@ class TwitterLogin(Twitter):
             self._account.update_status(Account.STATUS_WRONG_CREDENTIALS)
             return
         # Make a request to the home page to check the status.
-        # If this header is not sent, twitter redirects the user to an empty
-        # page that contains a javascript redirect to the actual home page.
-        headers = {
-            'Referer':
-                'https://twitter.com/login/error?redirect_after_login=%2F'
-        }
         home_response = self.make_request(
             self._session,
             self.BASE_URL,
             'get',
-            headers=headers
+            # If this header is not sent, the user is redirected to an empty
+            # page that contains a javascript redirect to the requested page.
+            headers={'Referer': self.AFTER_LOGIN_REFERER}
         )
         # If the request was redirected to an account access check we can not
         # continue.
