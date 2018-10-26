@@ -13,12 +13,14 @@ class TwitterLogin(Twitter):
     This scraper can be used to login a Twitter account.
 
     :const str LOGIN_URL: Login URL.
+    :const str LOGIN_URL: Login URL.
     :const str SESSIONS_URL: Sessions URL (used for login form submission).
     :const str CHALLENGE_URL: Login challenge URL.
     :param Account account: Account model instance.
     """
 
     LOGIN_URL = Twitter.BASE_URL + '/login'
+    LOGIN_ERROR_URL = Twitter.BASE_URL + '/login/error'
     SESSIONS_URL = Twitter.BASE_URL + '/sessions'
     CONFIRM_ACCESS = Twitter.BASE_URL + '/account/access'
     CHALLENGE_URL = Twitter.BASE_URL + '/account/login_challenge'
@@ -58,7 +60,7 @@ class TwitterLogin(Twitter):
                 # Redirect found. Check if there is any challenge to solve and
                 # determine the status.
                 self._check_for_challenge(response)
-                self._determine_status()
+                self._determine_status(response)
                 return
         # Cookies were not set or they did not work.
         # Check for the existence of the login form.
@@ -82,7 +84,7 @@ class TwitterLogin(Twitter):
         )
         # Check if there is any challenge to solve and determine the status.
         self._check_for_challenge(response)
-        self._determine_status()
+        self._determine_status(response)
 
     def _check_for_challenge(self, response: Response):
         """
@@ -134,9 +136,16 @@ class TwitterLogin(Twitter):
             else:
                 raise TwitterScrapingException('Challenge form not found.')
 
-    def _determine_status(self):
+    def _determine_status(self, response: Response):
         """
         Determine and save the account status. Save the cookies in the case
         that the login process was successful.
+
+        :param Response response: Response got from the login attempt.
         """
+        # The login is redirected to an error page if the supplied account
+        # credentials are wrong.
+        if response.url.startswith(self.LOGIN_ERROR_URL):
+            self._account.update_status(Account.STATUS_WRONG_CREDENTIALS)
+            return
         self._account.set_cookies(pickle.dumps(self._session.cookies))
