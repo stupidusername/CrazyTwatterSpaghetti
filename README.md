@@ -13,7 +13,7 @@
 
 ## Usage
 
-Run the flask application defined in `app.py`.
+Run the flask application defined in `app.py`. See [Flask deployment options](http://flask.pocoo.org/docs/1.0/deploying/).
 
 Note: Dates and times are displayed in UTC.
 
