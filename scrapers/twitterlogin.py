@@ -148,4 +148,11 @@ class TwitterLogin(Twitter):
         if response.url.startswith(self.LOGIN_ERROR_URL):
             self._account.update_status(Account.STATUS_WRONG_CREDENTIALS)
             return
+        # Make a request to the home page to check the status.
+        home_response = self.make_request(self._session, self.BASE_URL, 'get')
+        # If the request was redirected to an account access check we can not
+        # continue.
+        if home_response.url.startswith(self.CONFIRM_ACCESS):
+            self._account.update_status(Account.STATUS_UNCONFIRMED_ACCESS)
+            return
         self._account.set_cookies(pickle.dumps(self._session.cookies))
