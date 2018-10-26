@@ -2,7 +2,7 @@ import requests
 from requests import Response, Session
 from requests.exceptions import RequestException
 from scrapers.exceptions import TwitterScrapingException
-from typing import Any, Union
+from typing import Any, Optional
 
 
 class Twitter(object):
@@ -16,7 +16,7 @@ class Twitter(object):
 
     @staticmethod
     def make_request(
-        session: Union[None, Session],
+        session: Optional[Session],
         url: str,
         method: str,
         **kwargs: Any

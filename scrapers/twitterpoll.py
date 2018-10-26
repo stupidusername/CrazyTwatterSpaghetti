@@ -2,7 +2,7 @@ from lxml import html
 import re
 from scrapers.exceptions import TwitterScrapingException
 from scrapers.twitterstatus import TwitterStatus
-from typing import List, Union
+from typing import List, Optional
 
 
 class TwitterPoll(TwitterStatus):
@@ -93,7 +93,7 @@ class TwitterPoll(TwitterStatus):
                         'Options could not be determined.'
                     )
 
-    def is_poll(self) -> Union[bool, None]:
+    def is_poll(self) -> Optional[bool]:
         """
         Check if the status is a poll.
 
@@ -102,7 +102,7 @@ class TwitterPoll(TwitterStatus):
         """
         return self._is_poll
 
-    def is_finished(self) -> Union[bool, None]:
+    def is_finished(self) -> Optional[bool]:
         """
         Check if the poll is finished.
 
@@ -129,7 +129,7 @@ class TwitterPoll(TwitterStatus):
         """
         return self._options
 
-    def get_total_votes(self) -> Union[int, None]:
+    def get_total_votes(self) -> Optional[int]:
         """
         Get the total number of votes.
 

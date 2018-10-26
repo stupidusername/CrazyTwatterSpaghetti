@@ -2,7 +2,7 @@ from lxml import html
 from lxml.etree import tostring
 import requests
 from scrapers.twitter import Twitter
-from typing import Union
+from typing import Optional
 
 
 class TwitterStatus(Twitter):
@@ -30,7 +30,7 @@ class TwitterStatus(Twitter):
         if elements:
             self._status = elements[0].text_content()
 
-    def get_status(self) -> Union[None, str]:
+    def get_status(self) -> Optional[str]:
         """
         Get the status message.
 

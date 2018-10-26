@@ -1,6 +1,6 @@
 from app import db
 from datetime import datetime
-from typing import Union
+from typing import Optional
 
 
 class Account(db.Model):
@@ -42,7 +42,7 @@ class Account(db.Model):
         self.status_updated_at = datetime.utcnow()
         db.session.commit()
 
-    def set_cookies(self, cookies: Union[None, str]):
+    def set_cookies(self, cookies: Optional[str]):
         """
         Set and save cookies.
 
