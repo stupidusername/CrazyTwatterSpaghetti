@@ -16,6 +16,8 @@ class TwitterPoll(TwitterStatus):
     """
 
     def __init__(self, id: int, twitter_login: Optional[TwitterLogin] = None):
+        # Get session to pass to the parent constructor.
+        session = twitter_login.get_session if twitter_login else None
         super(TwitterPoll, self).__init__(id, session)
         # Default attribute values.
         self._twitter_login = twitter_login
@@ -42,7 +44,7 @@ class TwitterPoll(TwitterStatus):
                 if elements:
                     poll_status = elements[0].get('data-poll-init-state')
                     if poll_status == 'opened':
-                        self._finished = True
+                        self._finished = False
                     elif poll_status == 'final':
                         self._finished = True
                 if self._finished is None:
