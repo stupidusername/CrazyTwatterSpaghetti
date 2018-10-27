@@ -19,7 +19,7 @@ Note: Dates and times are displayed in UTC.
 
 ## Accounts CSV format
 
-`<screen_name>, <email>, <password>, <phone_number>`
+`<screen_name>,<email>,<password>,<phone_number>`
 
 ## API endpoints
 
