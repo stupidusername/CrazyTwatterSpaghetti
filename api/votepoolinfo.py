@@ -1,3 +1,4 @@
+from app import running_vote_pool_ids
 from flask_restful import Resource
 from models.votepool import VotePool
 from scrapers.twitterpoll import TwitterPoll
@@ -16,4 +17,9 @@ class VotePoolInfo(Resource):
         :returns:
         """
         vote_pool = VotePool.query.filter(VotePool.id == id).first()
-        return vote_pool.get_basic_info()
+        # If the pool is not finished and is not listed as a current running
+        # pool change its status to interrupted.
+        finished = vote_pool.status == VotePool.STATUS_FINISHED
+        if not finished and vote_pool.id not in running_vote_pool_ids:
+            vote_pool.update_status(VotePool.STATUS_INTERRUPTED)
+        return vote_pool.get_info()

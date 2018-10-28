@@ -1,5 +1,5 @@
 from app import db
-
+from models.vote import Vote
 
 class VotePool(db.Model):
     """
@@ -14,6 +14,7 @@ class VotePool(db.Model):
     STATUS_FINISHED = 'finished'
     STATUS_INTERRUPTED = 'interrupted'
 
+    # Columns.
     id = db.Column('id', db.Integer, primary_key=True)
     tweet_id = db.Column('tweet_id', db.Integer, nullable=False)
     option_index = db.Column('option_index', db.Integer, nullable=False)
@@ -48,3 +49,33 @@ class VotePool(db.Model):
                 self.create_datetime.strftime("%Y-%m-%d %H:%M:%S"),
             'status': self.status
         }
+
+    def get_info(self) -> dict:
+        """
+        Get the information from this model plus the its vote results.
+
+        :returns: A dictionary that contains all the information. Please refer
+            to the `/api/vote-pool-info` API endpoint section in the app README
+            for more information.
+        """
+        info = self.get_basic_info()
+        # Count total tries.
+        tries = Vote.query.filter(Vote.vote_pool_id == self.id).count()
+        # Count hits.
+        hits = Vote.query.\
+            filter(Vote.vote_pool_id == self.id).\
+            filter(Vote.hit == True).count()
+        # Build error messages.
+        error_votes = Vote.query.\
+            filter(Vote.vote_pool_id == self.id).\
+            filter(Vote.hit == False).all()
+        errors = []
+        for vote in error_votes:
+            error = {'screen_name': vote.screen_name, 'error': vote.error}
+            errors.append(error)
+        # Add extra info.
+        info['tries'] = tries
+        info['hits'] = hits
+        info['errors'] = errors
+        # Send info.
+        return info
