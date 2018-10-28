@@ -45,13 +45,27 @@ class AddVotePool(Resource):
         )
         db.session.add(self._vote_pool)
         db.session.commit()
-        # Add it to the list of running vote pools.
-        running_vote_pool_ids.append(self._vote_pool.id)
+        # Start the vote requests in a new thread.
+        _thread.start_new_thread(self._vote, (self._vote_pool.id,))
+        # Return the vote pool information.
+        return self._vote_pool.get_basic_info()
+
+    def _vote(self, vote_pool_id):
+        """
+        Make the vote requests.
+
+        :param int vote_pool_id: Vote pool ID.
+        """
+        # We need to create the model again because the same db session cannot
+        # be used from two different threads.
+        vote_pool = VotePool.query.filter(VotePool.id == vote_pool_id).first()
+        # Add this pool to the list of running vote pools.
+        running_vote_pool_ids.append(vote_pool.id)
         # Get the id of the accounts that already voted on the poll.
         screen_names = []
         duplicated_vote_pools = VotePool.query.\
-            filter(VotePool.id != self._vote_pool.id).\
-            filter(VotePool.tweet_id == self._vote_pool.tweet_id).all()
+            filter(VotePool.id != vote_pool.id).\
+            filter(VotePool.tweet_id == vote_pool.tweet_id).all()
         if duplicated_vote_pools:
             vote_pool_ids = [vp.id for vp in duplicated_vote_pools]
             votes = Vote.query.\
@@ -76,34 +90,23 @@ class AddVotePool(Resource):
                 Account.status_updated_at.desc(),
                 Account.id.desc()
             ).\
-            limit(max_tries).all()
-        # Start the vote requests in a new thread.
-        _thread.start_new_thread(self._vote, (accounts,))
-        # Return the vote pool information.
-        return self._vote_pool.get_basic_info()
-
-    def _vote(self, accounts):
-        """
-        Make the vote requests.
-
-        :param list[Account]:
-        """
+            limit(vote_pool.max_tries).all()
         # Try while there are available accounts and the intended hits was not
         # reached.
-        while accounts and self._hits < self._vote_pool.intended_hits:
+        while accounts and self._hits < vote_pool.intended_hits:
             account = accounts.pop(0)
             error = None
             # Try to vote.
             try:
                 twitter_login = TwitterLogin(account)
                 twitter_poll = \
-                    TwitterPoll(self._vote_pool.tweet_id, twitter_login)
-                twitter_poll.vote(self._vote_pool.option_index)
+                    TwitterPoll(vote_pool.tweet_id, twitter_login)
+                twitter_poll.vote(vote_pool.option_index)
             except Exception as e:
                 error = str(e)
             # Save the result.
             vote = Vote(
-                vote_pool_id=self._vote_pool.id,
+                vote_pool_id=vote_pool.id,
                 create_datetime=datetime.utcnow(),
                 screen_name=account.screen_name,
                 email=account.email,
@@ -116,7 +119,7 @@ class AddVotePool(Resource):
             db.session.commit()
             if not error:
                 self._hits += 1
-        # The vote pool has finished.
-        self._vote_pool.update_status(VotePool.STATUS_FINISHED)
+        # The vote pool has finished. Update its status.
+        vote_pool.update_status(VotePool.STATUS_FINISHED)
         # Remove it from the list of running vote pools.
-        running_vote_pool_ids.remove(self._vote_pool.id)
+        running_vote_pool_ids.remove(vote_pool.id)
