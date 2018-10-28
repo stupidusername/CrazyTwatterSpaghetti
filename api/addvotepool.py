@@ -1,9 +1,13 @@
+import _thread
 from app import db
 from datetime import datetime
 from flask_restful import Resource
 from models.account import Account
 from models.vote import Vote
 from models.votepool import VotePool
+from scrapers.exceptions import TwitterScrapingException
+from scrapers.twitterlogin import TwitterLogin
+from scrapers.twitterpoll import TwitterPoll
 from sqlalchemy.sql.expression import case
 
 
@@ -28,8 +32,10 @@ class AddVotePool(Resource):
         :param int max_tries: Maximum numer of tries.
         :returns: A dictionary representation of a `VotePool` instance.
         """
+        # Successful votes.
+        self._hits = 0
         # Create and save the new vote pool.
-        vote_pool = VotePool(
+        self._vote_pool = VotePool(
             tweet_id=tweet_id,
             option_index=option_index,
             intended_hits=intended_hits,
@@ -37,13 +43,13 @@ class AddVotePool(Resource):
             create_datetime=datetime.utcnow(),
             status=VotePool.STATUS_RUNNING
         )
-        db.session.add(vote_pool)
+        db.session.add(self._vote_pool)
         db.session.commit()
         # Get the id of the accounts that already voted on the poll.
         screen_names = []
         duplicated_vote_pools = VotePool.query.\
-            filter(VotePool.id != vote_pool.id).\
-            filter(VotePool.tweet_id == vote_pool.tweet_id).all()
+            filter(VotePool.id != self._vote_pool.id).\
+            filter(VotePool.tweet_id == self._vote_pool.tweet_id).all()
         if duplicated_vote_pools:
             vote_pool_ids = [vp.id for vp in duplicated_vote_pools]
             votes = Vote.query.\
@@ -69,4 +75,41 @@ class AddVotePool(Resource):
                 Account.id.desc()
             ).\
             limit(max_tries).all()
-        return vote_pool.get_basic_info()
+        # Start the vote requests in a new thread.
+        _thread.start_new_thread(self._vote, (accounts,))
+        # Return the vote pool information.
+        return self._vote_pool.get_basic_info()
+
+    def _vote(self, accounts):
+        """
+        Make the vote requests.
+
+        :param list[Account]:
+        """
+        # Try while there are available accounts and the intended hits was not
+        # reached.
+        while accounts and self._hits < self._vote_pool.intended_hits:
+            account = accounts.pop(0)
+            error = None
+            # Try to vote.
+            try:
+                twitter_login = TwitterLogin(account)
+                twitter_poll = TwitterPoll(twitter_login)
+                twitter_poll.vote(self._vote_pool.option_index)
+            except Exception as e:
+                error = str(e)
+            # Save the result.
+            vote = Vote(
+                vote_pool_id=self._vote_pool.id,
+                create_datetime=datetime.utcnow(),
+                screen_name=account.screen_name,
+                email=account.email,
+                password=account.password,
+                phone_number=account.phone_number,
+                hit=not error,
+                error=error
+            )
+            db.session.add(vote)
+            db.session.commit()
+            if not error:
+                self._hits += 1
