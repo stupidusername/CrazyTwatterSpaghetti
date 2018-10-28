@@ -5,6 +5,13 @@ class TwitterScrapingException(Exception):
     pass
 
 
+class TwitterLoginException(TwitterScrapingException):
+    """
+    An exception raised during a login.
+    """
+    pass
+
+
 class TwitterVoteException(TwitterScrapingException):
     """
     An exception raised during a poll vote.

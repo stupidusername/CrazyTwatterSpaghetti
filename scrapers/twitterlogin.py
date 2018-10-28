@@ -3,7 +3,7 @@ from models.account import Account
 import pickle
 import requests
 from requests import Response, Session
-from scrapers.exceptions import TwitterScrapingException
+from scrapers.exceptions import TwitterLoginException, TwitterScrapingException
 from scrapers.twitter import Twitter
 from urllib import parse
 
@@ -144,10 +144,16 @@ class TwitterLogin(Twitter):
                 # Submit the form.
                 response = self.make_request(
                     self._session,
-                    self.SESSIONS_URL,
+                    response.url,
                     'post',
                     data=dict(form.form_values())
                 )
+                # Check that the submitted information was correct.
+                if response.url.startswith(self.CHALLENGE_URL):
+                    # Challege response was incorrect.
+                    raise TwitterLoginException(
+                        'Incorrect challenge response.'
+                    )
             else:
                 raise TwitterScrapingException('Challenge form not found.')
 
