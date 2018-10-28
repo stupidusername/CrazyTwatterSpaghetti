@@ -1,5 +1,5 @@
 import _thread
-from app import db
+from app import db, running_vote_pool_ids
 from datetime import datetime
 from flask_restful import Resource
 from models.account import Account
@@ -45,6 +45,8 @@ class AddVotePool(Resource):
         )
         db.session.add(self._vote_pool)
         db.session.commit()
+        # Add it to the list of running vote pools.
+        running_vote_pool_ids.append(self._vote_pool.id)
         # Get the id of the accounts that already voted on the poll.
         screen_names = []
         duplicated_vote_pools = VotePool.query.\
@@ -94,7 +96,8 @@ class AddVotePool(Resource):
             # Try to vote.
             try:
                 twitter_login = TwitterLogin(account)
-                twitter_poll = TwitterPoll(twitter_login)
+                twitter_poll = \
+                    TwitterPoll(self._vote_pool.tweet_id, twitter_login)
                 twitter_poll.vote(self._vote_pool.option_index)
             except Exception as e:
                 error = str(e)
@@ -113,3 +116,7 @@ class AddVotePool(Resource):
             db.session.commit()
             if not error:
                 self._hits += 1
+        # The vote pool has finished.
+        self._vote_pool.update_status(VotePool.STATUS_FINISHED)
+        # Remove it from the list of running vote pools.
+        running_vote_pool_ids.remove(self._vote_pool.id)

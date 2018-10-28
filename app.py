@@ -21,6 +21,9 @@ api = Api(app)
 # Variable db must be declared before the rest of the imported classes use it.
 db = SQLAlchemy(app)
 
+# Global variable to store the id of the running vote pools.
+running_vote_pool_ids = []
+
 # Import models.
 from models.account import Account
 
@@ -37,6 +40,7 @@ admin.add_view(ImportView(name='Import CSV', endpoint='import'))
 # Import api resources.
 from api.addvotepool import AddVotePool
 from api.pollinfo import PollInfo
+from api.votepoolinfo import VotePoolInfo
 
 # Add API endpoints.
 api.add_resource(
@@ -47,4 +51,8 @@ api.add_resource(
 api.add_resource(
     PollInfo,
     '/api/poll-info/<int:tweet_id>'
+)
+api.add_resource(
+    VotePoolInfo,
+    '/api/vote-pool-info/<int:id>'
 )
