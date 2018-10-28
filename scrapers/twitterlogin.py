@@ -172,7 +172,7 @@ class TwitterLogin(Twitter):
             # page that contains a javascript redirect to the requested page.
             headers={'Referer': self.AFTER_LOGIN_REFERER}
         )
-        # If the request was redirected to an account access check we can not
+        # If the request was redirected to an account access check we cannot
         # continue.
         if home_response.url.startswith(self.CONFIRM_ACCESS_URL):
             self._account.update_status(Account.STATUS_UNCONFIRMED_ACCESS)

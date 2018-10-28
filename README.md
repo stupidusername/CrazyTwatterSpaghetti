@@ -1,15 +1,18 @@
 # CrazyTwatterSpaghetti
 
+
 ## Requirements
 
 - Python >= 3.6 (Tested on 3.6.6).
 - Pip packages listed on `requirements.txt`.
 - A RDBMS supported by SQLAlchemy. See [SQLAlchemy 1.2 Documentation > Dialects](https://docs.sqlalchemy.org/en/latest/dialects/index.html).
 
+
 ## Installation
 
 - Create a `config.ini`. Change the database DSN and the secret key used for cookies. Use `config-example.ini` as reference.
 - Apply DB migrations: `$ alembic upgrade head`.
+
 
 ## Usage
 
@@ -17,9 +20,11 @@ Run the flask application defined in `app.py`. See [Flask deployment options](ht
 
 Note: Dates and times are displayed in UTC.
 
+
 ## Accounts CSV format
 
 `<screen_name>,<email>,<password>,<phone_number>`
+
 
 ## API endpoints
 
@@ -81,22 +86,59 @@ Note: Dates and times are displayed in UTC.
     }
     ```
 
-- `/api/poll-vote/<tweet_id>/<option_index>/<votes>`
+- `/api/add-vote-pool/<tweet_id>/<option_index>/<intended_hits>/<max_tries>`
 
-  Use the loaded accounts to try to give a certain number of votes to a given poll option.
-  The number of tries will be lower than the specified number of votes if there is no enough accounts loaded.
+  Start a vote pool. This method responds as soon as the pool is created.
+  The status of the pool can be checked later on.
+
+  - Params:
+
+    - `tweet_id`: Twitter status id.
+    - `option_index`: Selected option index.
+    - `intended_hits`: Intended number of successful votes.
+    - `max_tries`: Maximum number of tries.
 
   - Response example:
 
     ```
     {
-      "tries": 10,
-      "hits": 9,
+      "id": 1,
+      "tweet_id": 1111111111111111111,
+      "option_index": 1,
+      "intended_hits": 10,
+      "max_tries": 100,
+      "create_datetime": "2018-10-21 23:38:51",
+      "status": "running"
+    }
+    ```
+
+- `/api/vote-pool-info/<id>`
+
+  Check the status of the vote pool give its id.
+
+  - Response example:
+
+    ```
+    {
+      "id": 1,
+      "tweet_id": 1111111111111111111,
+      "option_index": 1,
+      "intended_hits": 10,
+      "max_tries": 100,
+      "create_datetime": "2018-10-21 23:38:51",
+      "status": "finished",
+      "tries": 11,
+      "hits": 10,
       "errors": [
         {
           "screen_name": "john_doe",
-          "error": "Unable to login: non-existing user or incorrect password."
+          "error": "Cannot vote. Account status: suspended."
         }
       ]
     }
     ```
+
+  - Notes:
+
+    - `status` can take the values `running`, `finished` or `interrupted`.
+    - The number of tries can be lower than the specified if there are no enough available accounts.

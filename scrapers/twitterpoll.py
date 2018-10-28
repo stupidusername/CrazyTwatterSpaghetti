@@ -179,7 +179,9 @@ class TwitterPoll(TwitterStatus):
         # Check that the accout is logged in.
         account = self._twitter_login.get_account()
         if account.status != Account.STATUS_LOGGED_IN:
-            raise TwitterVoteException('The account could not be logged in.')
+            raise TwitterVoteException(
+                'Cannot vote. Account status: ' + account.status + '.'
+            )
         # Proceed to try to vote.
         # First will try to figure if the user already voted.
         # Get the parameters to make the vote request.
