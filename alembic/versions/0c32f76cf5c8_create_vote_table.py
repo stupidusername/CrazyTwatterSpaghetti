@@ -20,7 +20,12 @@ def upgrade():
     op.create_table(
         'vote',
         sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('vote_pool_id', sa.Integer, sa.ForeignKey('vote_pool.id')),
+        sa.Column(
+            'vote_pool_id',
+            sa.Integer,
+            sa.ForeignKey('vote_pool.id'),
+            nullable=False
+        ),
         sa.Column('create_datetime', sa.DateTime(), nullable=False),
         sa.Column('screen_name', sa.String(), nullable=False),
         sa.Column('email', sa.String(), nullable=False),
