@@ -31,3 +31,20 @@ class VotePool(db.Model):
         """
         self.status = status
         db.session.commit()
+
+    def get_basic_info(self) -> dict:
+        """
+        Get the information of this model.
+
+        :returns: A dictionary representation of this model.
+        """
+        return {
+            'id': self.id,
+            'tweet_id': self.tweet_id,
+            'option_index': self.option_index,
+            'intended_hits': self.intended_hits,
+            'max_tries': self.max_tries,
+            'create_datetime':
+                self.create_datetime.strftime("%Y-%m-%d %H:%M:%S"),
+            'status': self.status
+        }

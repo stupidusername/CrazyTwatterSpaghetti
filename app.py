@@ -35,15 +35,16 @@ admin.add_view(AccountView(Account, db.session, name='Accounts'))
 admin.add_view(ImportView(name='Import CSV', endpoint='import'))
 
 # Import api resources.
+from api.addvotepool import AddVotePool
 from api.pollinfo import PollInfo
-from api.pollvote import PollVote
 
 # Add API endpoints.
 api.add_resource(
-    PollInfo,
-    '/api/poll-info/<int:tweet_id>'
+    AddVotePool,
+    '/api/add-vote-pool/'
+    '<int:tweet_id>/<int:option_index>/<int:intended_hits>/<int:max_tries>'
 )
 api.add_resource(
-    PollVote,
-    '/api/poll-vote/<int:tweet_id>/<int:option_index>/<int:votes>'
+    PollInfo,
+    '/api/poll-info/<int:tweet_id>'
 )
