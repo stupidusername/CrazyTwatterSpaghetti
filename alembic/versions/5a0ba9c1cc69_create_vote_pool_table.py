@@ -20,10 +20,11 @@ def upgrade():
     op.create_table(
         'vote_pool',
         sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('create_datetime', sa.DateTime(), nullable=False),
+        sa.Column('tweet_id', sa.Integer, nullable=False),
+        sa.Column('option_index', sa.Integer, nullable=False),
         sa.Column('intended_hits', sa.Integer, nullable=False),
+        sa.Column('create_datetime', sa.DateTime(), nullable=False),
         sa.Column('status', sa.String(), nullable=False),
-        sa.Column('error', sa.Text())
     )
 
 
