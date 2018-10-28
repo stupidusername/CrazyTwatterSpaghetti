@@ -1,5 +1,5 @@
 """
-Create account table
+Create account table.
 
 Revision ID: afc56bac4b59
 Revises:
