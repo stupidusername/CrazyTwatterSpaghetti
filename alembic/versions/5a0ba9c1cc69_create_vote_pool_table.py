@@ -23,6 +23,7 @@ def upgrade():
         sa.Column('tweet_id', sa.Integer, nullable=False),
         sa.Column('option_index', sa.Integer, nullable=False),
         sa.Column('intended_hits', sa.Integer, nullable=False),
+        sa.Column('max_tries', sa.Integer, nullable=False),
         sa.Column('create_datetime', sa.DateTime(), nullable=False),
         sa.Column('status', sa.String(), nullable=False),
     )
