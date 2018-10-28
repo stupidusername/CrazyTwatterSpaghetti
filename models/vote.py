@@ -11,7 +11,7 @@ class Vote(db.Model):
         'vote_pool_id',
         db.Integer,
         db.ForeignKey('vote_pool.id'),
-        nullabe=False
+        nullable=False
     )
     create_datetime = \
         db.Column('create_datetime', db.DateTime(), nullable=False)
