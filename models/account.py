@@ -7,7 +7,7 @@ class Account(db.Model):
     """
     Account model.
 
-    Status will be blank for those account which were not tested.
+    Status will be blank for those accounts which were not tested.
 
     :const str STATUS_LOGGED_IN: Login was successful.
     :const str STATUS_WRONG_CREDENTIALS: Incorrect screen name or password.
