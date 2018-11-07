@@ -14,7 +14,7 @@ class VotePoolInfo(Resource):
         Get information from a vote pool.
 
         :param int id: Vote pool ID.
-        :returns:
+        :returns: A dictionary with the information of a vote pool.
         """
         vote_pool = VotePool.query.filter(VotePool.id == id).first()
         # If the pool is not finished and is not listed as a current running
