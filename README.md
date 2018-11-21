@@ -21,6 +21,13 @@ Run the flask application defined in `app.py`. See [Flask deployment options](ht
 Note: Dates and times are displayed in UTC.
 
 
+## Using a proxy
+
+All the requests sent by this application are made through the `requests` module.
+You can configure proxies by setting some environment variables.
+See [Requests Documentation > Advanced Usage > Proxies](http://docs.python-requests.org/en/master/user/advanced/#proxies).
+
+
 ## Accounts CSV format
 
 `<screen_name>,<email>,<password>,<phone_number>`
