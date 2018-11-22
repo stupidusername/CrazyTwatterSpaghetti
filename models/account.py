@@ -19,7 +19,7 @@ class Account(db.Model):
     STATUS_LOGGED_IN = 'logged_in'
     STATUS_WRONG_CREDENTIALS = 'wrong_credentials'
     STATUS_SUSPENDED = 'suspended'
-    STATUS_UNCONFIRMED_ACCESS = 'unconfirmed_acess'
+    STATUS_UNCONFIRMED_ACCESS = 'unconfirmed_access'
     STATUS_UNDETERMINED = 'undetermined'
 
     id = db.Column('id', db.Integer, primary_key=True)
