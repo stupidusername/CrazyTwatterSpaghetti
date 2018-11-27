@@ -30,6 +30,10 @@ class TwitterLogin(Twitter):
     def __init__(self, account: Account):
         # Session used to keep cookies.
         self._session = requests.Session()
+        # Set the requests session proxies if they are needed.
+        if account.proxy:
+            proxies = {'http': account.proxy, 'https': account.proxy}
+            self._session.proxies.update(proxies)
         # Default attribute values.
         self._account = account
         # Store cookies because they are cleaned later on.
