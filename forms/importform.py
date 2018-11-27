@@ -26,7 +26,13 @@ class ImportForm(FlaskForm):
             )
             reader = csv.DictReader(
                 stream,
-                fieldnames=('screen_name', 'email', 'password', 'phone_number')
+                fieldnames=(
+                    'screen_name',
+                    'email',
+                    'password',
+                    'phone_number',
+                    'proxy'
+                )
             )
             db.session.bulk_save_objects([Account(**row) for row in reader])
             db.session.commit()

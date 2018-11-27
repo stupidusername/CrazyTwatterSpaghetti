@@ -31,6 +31,7 @@ class Account(db.Model):
     status = db.Column('status', db.String())
     status_updated_at = db.Column('status_updated_at', db.DateTime())
     cookies = db.Column('cookies', db.Text())
+    proxy = db.Column('proxy', db.String())
 
     def update_status(self, status: str):
         """
