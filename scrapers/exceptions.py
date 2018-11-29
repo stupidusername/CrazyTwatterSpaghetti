@@ -17,3 +17,10 @@ class TwitterVoteException(TwitterScrapingException):
     An exception raised during a poll vote.
     """
     pass
+
+
+class TwitterPasswordUpdateException(TwitterScrapingException):
+    """
+    An exception raised during a password update.
+    """
+    pass

@@ -50,7 +50,7 @@ class AddVotePool(Resource):
         # Return the vote pool information.
         return self._vote_pool.get_basic_info()
 
-    def _vote(self, vote_pool_id):
+    def _vote(self, vote_pool_id: int):
         """
         Make the vote requests.
 

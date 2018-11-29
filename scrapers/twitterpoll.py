@@ -22,7 +22,7 @@ class TwitterPoll(TwitterStatus):
     VOTE_URL = 'https://caps.twitter.com/v2/capi/passthrough/1'
 
     def __init__(self, id: int, twitter_login: Optional[TwitterLogin] = None):
-        # Get session to pass to the parent constructor.
+        # Get session and pass it to the parent constructor.
         session = twitter_login.get_session() if twitter_login else None
         super(TwitterPoll, self).__init__(id, session)
         # Default attribute values.

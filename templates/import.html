@@ -1,12 +1,26 @@
 {% extends 'admin/master.html' %}
 
 {% block body %}
-  <form method="POST" enctype="multipart/form-data">
+  <form method="POST" enctype="multipart/form-data" class="admin-form form-horizontal">
 
     {{ form.csrf_token }}
 
     <div class="control-group">
       {{ form.file }}
+    </div>
+
+
+    <div class="control-group">
+      <div class="control-label">
+        {{ form.change_passwords.label }}
+      </div>
+      <div class="controls">
+          {{ form.change_passwords }}
+      </div>
+    </div>
+
+    <div class="control-group">
+      If "Change Passwords" is enabled the accounts will be available as soon as their passwords are changed.
     </div>
 
     {% for error in form.errors['file'] %}

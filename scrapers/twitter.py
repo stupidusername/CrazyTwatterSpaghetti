@@ -28,7 +28,7 @@ class Twitter(object):
         """
         Make a request to an URL.
 
-        :param None | Session sesion: Session to be used for the request.
+        :param None|Session sesion: Session to be used for the request.
         :param str url: URL.
         :param str method: `get` or `porst`.
         :param **kwargs: Keyword arguments passed to the request method.
