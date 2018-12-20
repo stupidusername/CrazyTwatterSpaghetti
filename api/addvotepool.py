@@ -5,10 +5,12 @@ from flask_restful import Resource
 from models.account import Account
 from models.vote import Vote
 from models.votepool import VotePool
+from random import random
 from scrapers.exceptions import TwitterScrapingException
 from scrapers.twitterlogin import TwitterLogin
 from scrapers.twitterpoll import TwitterPoll
 from sqlalchemy.sql.expression import case
+from time import sleep
 
 
 class AddVotePool(Resource):
@@ -94,6 +96,10 @@ class AddVotePool(Resource):
         # Try while there are available accounts and the intended hits was not
         # reached.
         while accounts and self._hits < vote_pool.intended_hits:
+            # Sleep for a random amount of time if the previos try was a hit.
+            # Error could be undeclared.
+            if 'error' in locals() and not locals()['error']:
+                sleep(random() * 60)  # Sleep for a maximum of one minute.
             account = accounts.pop(0)
             error = None
             # Try to vote.
