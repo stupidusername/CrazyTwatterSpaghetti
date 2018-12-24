@@ -1,5 +1,5 @@
 import _thread
-from app import db, running_vote_pool_ids
+from createapp import db, running_vote_pool_ids
 from datetime import datetime
 from flask_restful import Resource
 from models.account import Account

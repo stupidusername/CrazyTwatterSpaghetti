@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 class Twitter(object):
     """
-    Abastract base class for twitter scrappers.
+    Abastract base class for twitter scrapers.
 
     :const str BASE_URL: Twitter base URL.
     :const str AFTER_LOGIN_REFERER: This raferer can be used in a request to

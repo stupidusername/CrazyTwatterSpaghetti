@@ -1,4 +1,4 @@
-from app import running_vote_pool_ids
+from createapp import running_vote_pool_ids
 from flask_restful import Resource
 from models.votepool import VotePool
 from scrapers.twitterpoll import TwitterPoll

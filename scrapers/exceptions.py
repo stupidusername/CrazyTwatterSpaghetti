@@ -24,3 +24,10 @@ class TwitterPasswordUpdateException(TwitterScrapingException):
     An exception raised during a password update.
     """
     pass
+
+
+class TwitterStatusUpdateException(TwitterScrapingException):
+    """
+    An exception raised during a status update.
+    """
+    pass

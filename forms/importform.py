@@ -1,5 +1,5 @@
 import _thread
-from app import app, db
+from createapp import db
 from csv import DictReader
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField, FileRequired

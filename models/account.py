@@ -1,4 +1,4 @@
-from app import db
+from createapp import db
 from datetime import datetime
 from typing import Optional
 

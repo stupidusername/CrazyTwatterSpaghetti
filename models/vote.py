@@ -1,4 +1,4 @@
-from app import db
+from createapp import db
 
 
 class Vote(db.Model):

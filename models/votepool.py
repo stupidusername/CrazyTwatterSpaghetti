@@ -1,5 +1,6 @@
-from app import db
+from createapp import db
 from models.vote import Vote
+
 
 class VotePool(db.Model):
     """
