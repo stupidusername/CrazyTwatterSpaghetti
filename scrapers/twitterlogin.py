@@ -104,6 +104,11 @@ class TwitterLogin(Twitter):
         # Check if there is any challenge to solve and determine the status.
         self._check_for_challenge(response)
         self._determine_status(response)
+        if self._account.status == Account.STATUS_UNDETERMINED:
+            # The status could not be determined.
+            raise TwitterScrapingException(
+                'Account status could not be determined.'
+            )
 
     def _check_for_challenge(self, response: Response):
         """
@@ -204,12 +209,8 @@ class TwitterLogin(Twitter):
                 self._account.update_status(Account.STATUS_SUSPENDED)
                 return
             else:
-                # No was found. The account is likely to be active.
+                # The account is likely to be active.
                 self._account.update_status(Account.STATUS_LOGGED_IN)
                 # Save the cookies.
                 self._account.set_cookies(pickle.dumps(self._session.cookies))
                 return
-        # The status could not be determined.
-        raise TwitterScrapingException(
-            'Account status could not be determined.'
-        )

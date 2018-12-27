@@ -1,5 +1,5 @@
-from generators.exceptions import GeneratorException
 from lxml import html
+from models.account import Account
 from scrapers.exceptions \
     import TwitterScrapingException, TwitterStatusUpdateException
 from scrapers.twitter import Twitter
@@ -19,6 +19,12 @@ class TwitterStatusUpdate(Twitter):
     def __init__(self, twitter_login: TwitterLogin, status: str):
         # Login session.
         session = twitter_login.get_session()
+        # Check that the accout is logged in.
+        account = twitter_login.get_account()
+        if account.status != Account.STATUS_LOGGED_IN:
+            raise TwitterStatusUpdateException(
+                'Cannot vote. Account status: ' + account.status + '.'
+            )
         # Get form authenticity token.
         response = self.make_request(
             session,

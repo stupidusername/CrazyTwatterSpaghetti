@@ -31,6 +31,12 @@ An optional proxy can be specified for each account.
 `<screen_name>,<email>,<password>,<phone_number>,<proxy_url>`
 
 
+## Faking account activity.
+
+A python script named `faker.py` is provided. This script posts a new status update to the timeline of each account.
+Only accounts that were not used in the last week will be used to fake activity.
+
+
 ## API endpoints
 
 - `/api/poll-info/<tweet_id>`
