@@ -31,6 +31,11 @@ An optional proxy can be specified for each account.
 `<screen_name>,<email>,<password>,<phone_number>,<proxy_url>`
 
 
+## Testing accounts.
+
+Run `test.py` to test the status of all the loaded accounts.
+
+
 ## Faking account activity
 
 A python script named `faker.py` is provided. This script posts a new status update to the timeline of each account.
