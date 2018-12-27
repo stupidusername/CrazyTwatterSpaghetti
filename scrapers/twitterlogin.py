@@ -72,10 +72,7 @@ class TwitterLogin(Twitter):
             self._check_for_challenge(response)
             self._determine_status(response)
             # Check if the login was successful.
-            logged_in = self._account.status in [
-                Account.STATUS_LOGGED_IN, Account.STATUS_SUSPENDED
-            ]
-            if logged_in:
+            if self._account.status != Account.STATUS_UNDETERMINED:
                 return
         # Cookies were not set or they did not work.
         # Get the login page.
