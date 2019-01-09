@@ -1,12 +1,11 @@
 import _thread
-from createapp import db, running_vote_pool_ids
+from createapp import create_app, db, running_vote_pool_ids
 from datetime import datetime
 from flask_restful import Resource
 from models.account import Account
 from models.vote import Vote
 from models.votepool import VotePool
 from random import random
-from scrapers.exceptions import TwitterScrapingException
 from scrapers.twitterlogin import TwitterLogin
 from scrapers.twitterpoll import TwitterPoll
 from sqlalchemy.sql.expression import case
@@ -58,6 +57,9 @@ class AddVotePool(Resource):
 
         :param int vote_pool_id: Vote pool ID.
         """
+        # Push an app context.
+        app = create_app()
+        app.app_context().push()
         # We need to create the model again because the same db session cannot
         # be used from two different threads.
         vote_pool = VotePool.query.filter(VotePool.id == vote_pool_id).first()
