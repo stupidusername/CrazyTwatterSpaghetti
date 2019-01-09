@@ -1,4 +1,5 @@
 from lxml import html
+from models.account import Account
 from scrapers.exceptions \
     import TwitterScrapingException, TwitterPasswordUpdateException
 from scrapers.twitter import Twitter
@@ -19,6 +20,11 @@ class TwitterPasswordUpdate(Twitter):
         Twitter.BASE_URL + '/settings/passwords/password_reset_confirmation'
 
     def __init__(self, twitter_login: TwitterLogin, new_password: str):
+        # Check if the account is logged in.
+        if twitter_login.get_account().status != Account.STATUS_LOGGED_IN:
+            raise TwitterPasswordUpdateException(
+                'The account is not logged in.'
+            )
         # Login session.
         session = twitter_login.get_session()
         # Current password of the account.
